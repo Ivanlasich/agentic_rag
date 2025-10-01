@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  qdrant-domains:
+    image: qdrant/qdrant
+    container_name: qdrant-domains
+    ports:
+      - "6335:6333"  # Другой порт чтобы не конфликтовать с основным
+      - "6336:6334"  # Другой порт для gRPC
+    volumes:
+      - qdrant_domains_data:/qdrant/storage
+    networks:
+      - mcp-domains-network
+    restart: unless-stopped
+
+  mcp-server-qdrant-domains:
+    build:
+      context: ./mcp-server-qdrant
+      dockerfile: Dockerfile
+    container_name: mcp-qdrant-domains
+    ports:
+      - "8007:8000"  # Другой порт для MCP сервера
+    environment:
+      - FASTMCP_HOST=0.0.0.0
+      - QDRANT_URL=http://qdrant-domains:6333
+      - COLLECTION_NAME=  # Пустое значение - позволяет выбирать коллекции!
+      - EMBEDDING_PROVIDER=tei
+      - EMBEDDING_MODEL=http://172.17.0.1:8089
+    networks:
+      - mcp-domains-network
+    depends_on:
+      - qdrant-domains
+    restart: unless-stopped
+
+  indexing-api:
+    build:
+      context: ./indexing_api
+      dockerfile: Dockerfile
+    container_name: indexing-api-domains
+    ports:
+      - "8009:8009"  # Порт для FastAPI (внешний 8009 -> внутренний 8009)
+    environment:
+      - QDRANT_URL=http://qdrant-domains:6333
+      - EMBEDDING_MODEL_URL=http://172.17.0.1:8089
+      - UPLOAD_DIR=/app/uploads
+      - DOMAINS_SUMMARY_DIR=/app/domains_summary
+    networks:
+      - mcp-domains-network
+    depends_on:
+      - qdrant-domains
+    restart: unless-stopped
+    volumes:
+      - ./uploads:/app/uploads
+      - ./domains_summary:/app/domains_summary
+
+  agentic-rag:
+    build:
+      context: ./agentic_rag
+      dockerfile: Dockerfile
+    container_name: agentic-rag-domains
+    ports:
+      - "8663:8663"  # agentic_rag API
+    environment:
+      - UPLOADS_PATH=/app/uploads
+      - SUMMARY_PATH=/app/domains_summary
+      - OPENAI_BASE_URL=http://172.17.0.1:19000/v1
+      - OPENAI_API_KEY=dummy-key
+    networks:
+      - mcp-domains-network
+    depends_on:
+      - mcp-server-qdrant-domains
+    restart: unless-stopped
+    volumes:
+      - ./uploads:/app/uploads
+      - ./domains_summary:/app/domains_summary
+
+volumes:
+  qdrant_domains_data:
+  # Shared host-mapped dirs for uploads and summaries are bind mounts; no named volumes required
+
+networks:
+  mcp-domains-network:
+    driver: bridge
