@@ -5,19 +5,16 @@ WORKDIR /app
 # System deps
 RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/lists/*
 
-# Install Python deps
+# Install Python deps with pinned versions
 RUN pip install --no-cache-dir \
-    fastapi \
-    uvicorn[standard] \
-    python-dotenv \
-    langchain-openai \
-    httpx \
-    pydantic \
-    PyYAML \
-    mcp-use
-
-# Optional MCP client lib if available
-RUN pip install --no-cache-dir mcp-use || true
+    fastapi==0.118.0 \
+    uvicorn[standard]==0.37.0 \
+    python-dotenv==1.1.1 \
+    langchain-openai==0.3.33 \
+    httpx==0.28.1 \
+    pydantic==2.11.9 \
+    PyYAML==6.0.3 \
+    mcp-use==1.3.11
 
 # Copy source
 COPY . /app/agentic_rag

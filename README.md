@@ -229,3 +229,4 @@ sudo chown -R $USER:$USER uploads domains_summary
 ## Поддержка
 
 При возникновении проблем создайте issue в репозитории GitHub.
+

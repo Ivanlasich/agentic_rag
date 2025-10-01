@@ -5,25 +5,24 @@ WORKDIR /app
 # System deps
 RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/lists/*
 
-# Install Python deps
-# Pin bcrypt to avoid passlib compatibility warnings and backend issues
+# Install Python deps with pinned versions
 RUN pip install --no-cache-dir \
-    fastapi \
-    uvicorn[standard] \
-    python-dotenv \
-    aiofiles \
-    qdrant-client \
-    requests \
-    httpx \
-    tqdm \
-    sqlalchemy \
+    fastapi==0.118.0 \
+    uvicorn[standard]==0.37.0 \
+    python-dotenv==1.1.1 \
+    aiofiles==24.1.0 \
+    qdrant-client==1.15.1 \
+    requests==2.32.5 \
+    httpx==0.28.1 \
+    tqdm==4.67.1 \
+    sqlalchemy==2.0.43 \
     passlib[bcrypt]==1.7.4 \
     bcrypt==4.1.2 \
-    python-jose[cryptography] \
-    python-multipart \
-    PyJWT \
-    email-validator \
-    PyPDF2
+    python-jose[cryptography]==3.5.0 \
+    python-multipart==0.0.20 \
+    PyJWT==2.10.1 \
+    email-validator==2.3.0 \
+    PyPDF2==3.0.1
 
 
 # Copy source
