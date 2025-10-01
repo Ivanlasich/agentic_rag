@@ -4,12 +4,13 @@
 
 ## Архитектура
 
-Система состоит из 4 основных сервисов:
+Система состоит из 5 основных сервисов:
 
 - **Qdrant Domains** - векторная база данных для хранения эмбеддингов
 - **MCP Server Qdrant** - сервер для взаимодействия с Qdrant через MCP протокол
 - **Indexing API** - API для индексации и загрузки документов
 - **Agentic RAG** - основной сервис для агентного поиска и генерации ответов
+- **Admin Panel** - веб-интерфейс для управления системой
 
 ## Требования
 
@@ -62,6 +63,7 @@ docker-compose -f docker-compose-domains.yml up --build
 - **Indexing API**: http://localhost:8009
 - **Agentic RAG API**: http://localhost:8663
 - **MCP Server**: http://localhost:8007
+- **Admin Panel**: http://localhost:3001
 
 ## Конфигурация
 
@@ -74,6 +76,7 @@ docker-compose -f docker-compose-domains.yml up --build
 | MCP Server | 8007 | 8000 | MCP протокол |
 | Indexing API | 8009 | 8009 | REST API |
 | Agentic RAG | 8663 | 8663 | REST API |
+| Admin Panel | 3001 | 80 | Web интерфейс |
 
 ### Переменные окружения
 
@@ -98,6 +101,12 @@ docker-compose -f docker-compose-domains.yml up --build
 - `SUMMARY_PATH` - путь к сводкам доменов
 - `OPENAI_BASE_URL` - базовый URL для OpenAI API
 - `OPENAI_API_KEY` - API ключ для OpenAI
+
+#### Admin Panel
+- Веб-интерфейс на React с Nginx
+- Аутентификация пользователей
+- Управление доменами и индексацией
+- Мониторинг системы
 
 ## Использование
 
@@ -124,6 +133,14 @@ curl -X POST "http://localhost:8663/search" \
 ### 3. Работа с MCP сервером
 
 MCP сервер предоставляет интерфейс для работы с Qdrant через MCP протокол. Подключитесь к `http://localhost:8007`.
+
+### 4. Администрирование через веб-интерфейс
+
+Откройте Admin Panel по адресу `http://localhost:3001` для:
+- Управления пользователями и аутентификацией
+- Мониторинга индексации документов
+- Управления доменами и коллекциями
+- Просмотра статистики системы
 
 ## Разработка
 
@@ -164,7 +181,15 @@ agentic_rag/
 │   ├── Dockerfile
 │   ├── src/
 │   └── pyproject.toml
+├── admin-panel/          # Веб-интерфейс администрирования
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── src/
+│   │   ├── components/
+│   │   └── App.js
+│   └── nginx.conf
 ├── docker-compose-domains.yml
+├── requirements.txt
 └── README.md
 ```
 

@@ -74,6 +74,19 @@ services:
       - ./uploads:/app/uploads
       - ./domains_summary:/app/domains_summary
 
+  admin-panel:
+    build:
+      context: ./admin-panel
+      dockerfile: Dockerfile
+    container_name: admin-panel-domains
+    ports:
+      - "3001:80"  # Nginx слушает на 80, маппим на 3001
+    networks:
+      - mcp-domains-network
+    depends_on:
+      - indexing-api
+    restart: unless-stopped
+
 volumes:
   qdrant_domains_data:
   # Shared host-mapped dirs for uploads and summaries are bind mounts; no named volumes required

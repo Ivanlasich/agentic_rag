@@ -40,3 +40,16 @@ pyright>=1.1.389
 pytest>=8.3.3
 pytest-asyncio>=0.23.0
 ruff>=0.8.0
+
+# Admin Panel (Node.js/React dependencies)
+# Note: Admin Panel uses Docker multi-stage build with Node.js
+# Main dependencies for local development:
+# - React 18.2.0
+# - React Router DOM 6.8.1
+# - Axios 1.4.0
+# - React Dropzone 14.2.3
+# - Lucide React 0.263.1
+# - Tailwind CSS 3.3.0
+# - Autoprefixer 10.4.14
+# - PostCSS 8.4.24
+# For production, the app is built and served via Nginx
